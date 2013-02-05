@@ -108,7 +108,22 @@ def breadthFirstSearch(problem):
     Search the shallowest nodes in the search tree first.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    root = problem.getStartState()
+    try:
+        visited, fringe = set(), util.Queue()
+        fringe.push((root, [], 0))
+        while not fringe.isEmpty():
+            coordinate, path, score = fringe.pop()
+            if problem.isGoalState(coordinate):
+                return path
+            if coordinate not in visited:
+                visited.add(coordinate)
+                for x, y, z in problem.getSuccessors(coordinate):
+                    if x not in visited:
+                        fringe.push((x, path + [y], z))
+        return []
+    except Exception as e:
+        print e
 
 def uniformCostSearch(problem):
     "Search the node of least total cost first. "
