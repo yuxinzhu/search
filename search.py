@@ -85,28 +85,29 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    return generalSearch(problem, dfs=True)
+    return generalSearch(problem, fn='dfs')
 
 def breadthFirstSearch(problem):
     """
     Search the shallowest nodes in the search tree first.
     """
     "*** YOUR CODE HERE ***"
-    return generalSearch(problem, dfs=False)
+    return generalSearch(problem, fn='bfs')
 
-def generalSearch(problem, dfs=True):
+def generalSearch(problem, fn):
+    dataStructure = {'bfs': util.Queue(), 'dfs': util.Stack()}
     root = problem.getStartState()
     try:
         visited = set()
-        fringe = util.Stack() if dfs else util.Queue()
+        fringe = dataStructure[fn]
         fringe.push((root, [], 0))
         while not fringe.isEmpty():
-            coordinate, path, score = fringe.pop()
-            if problem.isGoalState(coordinate):
+            location, path, cost = fringe.pop()
+            if problem.isGoalState(location):
                 return path
-            if coordinate not in visited:
-                visited.add(coordinate)
-                for x, y, z in problem.getSuccessors(coordinate):
+            if location not in visited:
+                visited.add(location)
+                for x, y, z in problem.getSuccessors(location):
                     if x not in visited:
                         fringe.push((x, path + [y], z))
         return []
@@ -116,7 +117,23 @@ def generalSearch(problem, dfs=True):
 def uniformCostSearch(problem):
     "Search the node of least total cost first. "
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    root = problem.getStartState()
+    try:
+        visited = set()
+        fringe = util.PriorityQueue()
+        fringe.push((root, [], 0), 0)
+        while not fringe.isEmpty():
+            location, path, cost = fringe.pop()
+            if problem.isGoalState(location):
+                return path
+            if location not in visited:
+                visited.add(location)
+                for x, y, z in problem.getSuccessors(location):
+                    if x not in visited:
+                        fringe.push((x, path + [y], z+cost), z+cost)
+        return []
+    except Exception as e:
+        print e
 
 def nullHeuristic(state, problem=None):
     """
@@ -125,10 +142,30 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+def awesomeHeuristic(state, problem=None):
+    return
+
 def aStarSearch(problem, heuristic=nullHeuristic):
     "Search the node that has the lowest combined cost and heuristic first."
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    pass
+    # root = problem.getStartState()
+    # try:
+    #     visited = set()
+    #     fringe = util.PriorityQueue()
+    #     fringe.push((root, [], 0), 0)
+    #     while not fringe.isEmpty():
+    #         location, path, cost = fringe.pop()
+    #         if problem.isGoalState(location):
+    #             return path
+    #         if location not in visited:
+    #             visited.add(location)
+    #             for x, y, z in problem.getSuccessors(location):
+    #                 if x not in visited:
+    #                     fringe.push((x, path + [y], ), z+cost)
+    #     return []
+    # except Exception as e:
+    #     print e
 
 
 # Abbreviations
