@@ -85,32 +85,20 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-
-    root = problem.getStartState()
-    try:
-        visited, fringe = set(), util.Stack()
-        fringe.push((root, [], 0))
-        while not fringe.isEmpty():
-            coordinate, path, score = fringe.pop()
-            if problem.isGoalState(coordinate):
-                return path
-            if coordinate not in visited:
-                visited.add(coordinate)
-                for x, y, z in problem.getSuccessors(coordinate):
-                    if x not in visited:
-                        fringe.push((x, path + [y], z))
-        return []
-    except Exception as e:
-        print e
+    return generalSearch(problem, dfs=True)
 
 def breadthFirstSearch(problem):
     """
     Search the shallowest nodes in the search tree first.
     """
     "*** YOUR CODE HERE ***"
+    return generalSearch(problem, dfs=False)
+
+def generalSearch(problem, dfs=True):
     root = problem.getStartState()
     try:
-        visited, fringe = set(), util.Queue()
+        visited = set()
+        fringe = util.Stack() if dfs else util.Queue()
         fringe.push((root, [], 0))
         while not fringe.isEmpty():
             coordinate, path, score = fringe.pop()
