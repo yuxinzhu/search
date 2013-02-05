@@ -4,7 +4,7 @@
 # project. You are free to use and extend these projects for educational
 # purposes. The Pacman AI projects were developed at UC Berkeley, primarily by
 # John DeNero (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
-# Student side autograding was added by Brad Miller, Nick Hay, and Pieter 
+# Student side autograding was added by Brad Miller, Nick Hay, and Pieter
 # Abbeel in Spring 2013.
 # For more info, see http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html
 
@@ -85,59 +85,75 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    
 
-
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    
-
-    check = set()
-    simpleCheck = set()
-    fringe = util.Stack()
-    if problem.isGoalState(problem.getStartState()):
+    root = problem.getStartState()
+    print "root: " + str(root)
+    print "Is the root a goal: " + str(problem.isGoalState(root))
+    print "Root Successors: " +  str(problem.getSuccessors(root))
+    try:
+        visited = set()
+        fake_fringe = []
+        fringe = util.Stack()
+        fringe.push((root, [], 0))
+        fake_fringe.append((root, [], 0))
+        while not fringe.isEmpty():
+            # print 'next!'
+            temp = fringe.pop()
+            # print 'Fringe: ' + str(fake_fringe)
+            coordinate, path, score = temp
+            if problem.isGoalState(coordinate):
+                # print str(path)
+                return path
+            if coordinate not in visited:
+                visited.add(coordinate)
+                # print problem.getSuccessors(coordinate)
+                for x, y, z in problem.getSuccessors(coordinate):
+                    # print 'Possible called with: ' + str(coordinate)
+                    next = (x, path + [y], z)
+                    # print 'Possible next: ' + str(next)
+                    fringe.push(next)
+                    fake_fringe.append(next)
         return []
-    else:
-        fringe.push((problem.getStartState(), [], 0))
-        simpleCheck.add(problem.getStartState())
-    while not fringe.isEmpty():
-        temp = fringe.pop()
-        if problem.isGoalState(temp[0]):
-            return temp[1]
-        if temp[0] not in simpleCheck:
-            simpleCheck.add(temp[0])
-            print(temp[1])
-            for x,y,z in temp.getSuccessors(temp[0]):
-                fringe.push((x, [temp[1]]+[y], z)) 
-    return [] 
+    except Exception as e:
+        print e
 
-    """
-    check = set()
-    fringe = util.Stack()
-    path = []
-    if problem.isGoalState(problem.getStartState()):
-        return 1
-    else:
-        for x in problem.getSuccessors(problem.getStartState()):
-            fringe.push(x)
-    while not fringe.isEmpty():
-        temp = fringe.pop()
-        if problem.isGoalState(temp[0]):
-            return path
-        if temp not in check:
-            check.add(temp)
-            path.append(temp[1])
-            for x in problem.getSuccessors(temp[0]):
-                fringe.push(x)
-        else:
-            path = path[:1]
-            check.add(temp)
-    return [] """
-  
+    # if problem.isGoalState(root):
+    #     return []
+    # else:
+    #     fringe.push((root, [], 0))
+    #     simpleCheck.add(root)
+    # while not fringe.isEmpty():
+    #     temp = fringe.pop()
+    #     if problem.isGoalState(temp[0]):
+    #         return temp[1]
+    #     if temp[0] not in simpleCheck:
+    #         simpleCheck.add(temp[0])
+    #         print(temp[1])
+    #         for x,y,z in temp.getSuccessors(temp[0]):
+    #             fringe.push((x, [temp[1]]+[y], z))
+    # return []
 
-
-  
+    # check = set()
+    # fringe = util.Stack()
+    # path = []
+    # if problem.isGoalState(problem.getStartState()):
+    #     return 1
+    # else:
+    #     for x in problem.getSuccessors(problem.getStartState()):
+    #         fringe.push(x)
+    # while not fringe.isEmpty():
+    #     temp = fringe.pop()
+    #     if problem.isGoalState(temp[0]):
+    #         return path
+    #     if temp not in check:
+    #         check.add(temp)
+    #         path.append(temp[1])
+    #         for x in problem.getSuccessors(temp[0]):
+    #             fringe.push(x)
+    #     else:
+    #         path = path[:1]
+    #         check.add(temp)
+    # return []
 
 def breadthFirstSearch(problem):
     """
