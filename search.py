@@ -70,6 +70,7 @@ def tinyMazeSearch(problem):
     return  [s,s,w,s,w,w,s,w]
 
 def depthFirstSearch(problem):
+
     """
     Search the deepest nodes in the search tree first
 
@@ -84,7 +85,59 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    
+
+
+    print "Start:", problem.getStartState()
+    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    
+
+    check = set()
+    simpleCheck = set()
+    fringe = util.Stack()
+    if problem.isGoalState(problem.getStartState()):
+        return []
+    else:
+        fringe.push((problem.getStartState(), [], 0))
+        simpleCheck.add(problem.getStartState())
+    while not fringe.isEmpty():
+        temp = fringe.pop()
+        if problem.isGoalState(temp[0]):
+            return temp[1]
+        if temp[0] not in simpleCheck:
+            simpleCheck.add(temp[0])
+            print(temp[1])
+            for x,y,z in temp.getSuccessors(temp[0]):
+                fringe.push((x, [temp[1]]+[y], z)) 
+    return [] 
+
+    """
+    check = set()
+    fringe = util.Stack()
+    path = []
+    if problem.isGoalState(problem.getStartState()):
+        return 1
+    else:
+        for x in problem.getSuccessors(problem.getStartState()):
+            fringe.push(x)
+    while not fringe.isEmpty():
+        temp = fringe.pop()
+        if problem.isGoalState(temp[0]):
+            return path
+        if temp not in check:
+            check.add(temp)
+            path.append(temp[1])
+            for x in problem.getSuccessors(temp[0]):
+                fringe.push(x)
+        else:
+            path = path[:1]
+            check.add(temp)
+    return [] """
+  
+
+
+  
 
 def breadthFirstSearch(problem):
     """
