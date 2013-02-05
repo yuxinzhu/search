@@ -87,73 +87,21 @@ def depthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
 
     root = problem.getStartState()
-    print "root: " + str(root)
-    print "Is the root a goal: " + str(problem.isGoalState(root))
-    print "Root Successors: " +  str(problem.getSuccessors(root))
     try:
-        visited = set()
-        fake_fringe = []
-        fringe = util.Stack()
+        visited, fringe = set(), util.Stack()
         fringe.push((root, [], 0))
-        fake_fringe.append((root, [], 0))
         while not fringe.isEmpty():
-            # print 'next!'
-            temp = fringe.pop()
-            # print 'Fringe: ' + str(fake_fringe)
-            coordinate, path, score = temp
+            coordinate, path, score = fringe.pop()
             if problem.isGoalState(coordinate):
-                # print str(path)
                 return path
             if coordinate not in visited:
                 visited.add(coordinate)
-                # print problem.getSuccessors(coordinate)
                 for x, y, z in problem.getSuccessors(coordinate):
-                    # print 'Possible called with: ' + str(coordinate)
-                    next = (x, path + [y], z)
-                    # print 'Possible next: ' + str(next)
-                    fringe.push(next)
-                    fake_fringe.append(next)
+                    if x not in visited:
+                        fringe.push((x, path + [y], z))
         return []
     except Exception as e:
         print e
-
-    # if problem.isGoalState(root):
-    #     return []
-    # else:
-    #     fringe.push((root, [], 0))
-    #     simpleCheck.add(root)
-    # while not fringe.isEmpty():
-    #     temp = fringe.pop()
-    #     if problem.isGoalState(temp[0]):
-    #         return temp[1]
-    #     if temp[0] not in simpleCheck:
-    #         simpleCheck.add(temp[0])
-    #         print(temp[1])
-    #         for x,y,z in temp.getSuccessors(temp[0]):
-    #             fringe.push((x, [temp[1]]+[y], z))
-    # return []
-
-    # check = set()
-    # fringe = util.Stack()
-    # path = []
-    # if problem.isGoalState(problem.getStartState()):
-    #     return 1
-    # else:
-    #     for x in problem.getSuccessors(problem.getStartState()):
-    #         fringe.push(x)
-    # while not fringe.isEmpty():
-    #     temp = fringe.pop()
-    #     if problem.isGoalState(temp[0]):
-    #         return path
-    #     if temp not in check:
-    #         check.add(temp)
-    #         path.append(temp[1])
-    #         for x in problem.getSuccessors(temp[0]):
-    #             fringe.push(x)
-    #     else:
-    #         path = path[:1]
-    #         check.add(temp)
-    # return []
 
 def breadthFirstSearch(problem):
     """
