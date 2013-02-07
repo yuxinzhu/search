@@ -283,16 +283,22 @@ class CornersProblem(search.SearchProblem):
         "Returns the start state (in your state space, not the full Pacman state space)"
         "*** YOUR CODE HERE ***"
         # util.raiseNotDefined()
-        visitedCorners = [False if self.startingPosition == c else True for c in self.corners]
-        return self.startingPosition, self.corners, visitedCorners
+        return self.startingPosition, self.corners
 
     def isGoalState(self, state):
         "Returns whether this search state is a goal state of the problem"
         "*** YOUR CODE HERE ***"
-        print 'State: ' + str(state[0])
-        if False in state[2]:
+        # return False
+        try:
+            # print state[1]
+            curr, corners = state
+            print curr
+            print state
+            if curr in corners and len(corners) == 1:
+                return True
             return False
-        return True
+        except Exception as e:
+            print 'Exception in isGoalState: ' + str(e)
 
     def getSuccessors(self, state):
         """
@@ -311,17 +317,18 @@ class CornersProblem(search.SearchProblem):
                 # Add a successor state to the successor list if the action is legal
                 # Here's a code snippet for figuring out whether a new position hits a wall:
                 # print 'State: ' + str(state[0])
-                x,y = state
+                curr, corners = state
+                x,y = curr
                 dx, dy = Actions.directionToVector(action)
                 nextx, nexty = int(x + dx), int(y + dy)
                 hitsWall = self.walls[nextx][nexty]
                 if not hitsWall:
-                    nextState = (nextx, nexty)
+                    nextState = ((nextx, nexty), corners) if curr not in corners else ((nextx, nexty), tuple([i for i in corners if i != curr]))
                     successors.append((nextState, action, 1))
             self._expanded += 1
             return successors
         except Exception as e:
-            print e
+            print 'Exception in getSuccessor: ' + str(e)
 
     def getCostOfActions(self, actions):
         """

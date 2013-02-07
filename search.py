@@ -104,6 +104,7 @@ def generalSearch(problem, fn):
         while not fringe.isEmpty():
             location, path, cost = fringe.pop()
             if problem.isGoalState(location):
+                print path
                 return path
             if location not in visited:
                 visited.add(location)
