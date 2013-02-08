@@ -114,6 +114,7 @@ def generalSearch(problem, fn):
         return []
     except Exception as e:
         print e
+        return []
 
 def uniformCostSearch(problem):
     "Search the node of least total cost first. "

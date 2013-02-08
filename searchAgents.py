@@ -552,10 +552,56 @@ class AnyFoodSearchProblem(PositionSearchProblem):
 
 class ApproximateSearchAgent(Agent):
     "Implement your contest entry here.  Change anything but the class name."
+    def __init__(self):
+        self.moves = []
+        self.corners = []
+        self.top = 0
+        self.right = 0
 
     def registerInitialState(self, state):
         "This method is called before any moves are made."
         "*** YOUR CODE HERE ***"
+        walls = state.getWalls()
+        top, right = walls.height-2, walls.width-2
+        self.top, self.right = top, right
+        self.corners = ((1,1), (1,top), (right, 1), (right, top))
+        corners_path = [((mazeDistance(state.getPacmanPosition(), c, state), c)) for c in self.corners]
+        prob = PositionSearchProblem(state, start=state.getPacmanPosition(), goal=min(corners_path)[1], warn=False)
+        print min(corners_path)[1]
+        self.moves = search.bfs(prob)
+        print self.moves
+
+        # print "START"
+        # foodGrid = state.getFood()
+        # # walls = state.getWalls()
+        # # start = state.getPacmanPosition()
+        # mcdonalds = []
+        # for x, row in enumerate(foodGrid):
+        #     for y, cell in enumerate(row):
+        #         if foodGrid[x][y]:
+        #             distance = mazeDistance(state.getPacmanPosition(), (x,y), state)
+
+        # if mcdonalds:
+        #     coordinate = min(mcdonalds)[1]
+        #     prob = PositionSearchProblem(state, start=start, goal=coordinate, warn=False)
+        #     self.moves = search.bfs(prob)
+        #     print self.moves
+        #     return
+        # self.moves = []
+    def cornerDistance(self, x, y):
+        return max([find_manhattan_distance((x,y), c) for c in self.corners])
+
+    def adjacentDots(self, state, currx, curry):
+        foodGrid = state.getFood()
+        position = state.getPacmanPosition()
+        walls = state.getWalls()
+        count = 0
+        for x in range(currx-2, currx+2):
+            for y in range(curry-2, curry+2):
+                if x > 0 and y > 0 and x < self.right and y < self.top:
+                    if foodGrid[x][y]:
+                        count += 1
+        return count
 
     def getAction(self, state):
         """
@@ -564,8 +610,27 @@ class ApproximateSearchAgent(Agent):
         Directions.{North, South, East, West, Stop}
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-        # return Directions.WEST
+        if not self.moves:
+            startPosition = state.getPacmanPosition()
+            food = state.getFood()
+            walls = state.getWalls()
+
+            mcdonalds = []
+            foodGrid = state.getFood()
+            for x, row in enumerate(foodGrid):
+                for y, cell in enumerate(row):
+                    if foodGrid[x][y]:
+                        score = find_manhattan_distance(state.getPacmanPosition(), (x,y)), self.adjacentDots(state, x,y), (x, y)
+                        print score
+                        mcdonalds.append(score)
+            if mcdonalds:
+                coordinate = min(mcdonalds)[2]
+                prob = PositionSearchProblem(state, start=startPosition, goal=coordinate, warn=False)
+                self.moves.extend(search.bfs(prob))
+        a = self.moves.pop(0)
+        # print str(state.getPacmanPosition()) + ' -- > ' + str(a)
+        return a
+
 
 def mazeDistance(point1, point2, gameState):
     """
