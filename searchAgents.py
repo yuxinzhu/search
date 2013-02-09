@@ -626,7 +626,6 @@ class ApproximateSearchAgent(Agent):
                     for y, cell in enumerate(row):
                         if foodGrid[x][y]:
                             score = mazeDistance(state.getPacmanPosition(), (x,y), state), self.adjacentDots(state, x,y), (x, y)
-                            print score
                             mcdonalds.append(score)
             if mcdonalds:
                 coordinate = min(mcdonalds)[2]
