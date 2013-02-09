@@ -560,7 +560,7 @@ class ApproximateSearchAgent(Agent):
         self.corners = []
         self.top = 0
         self.right = 0
-
+   
     def registerInitialState(self, state):
         "This method is called before any moves are made."
         "*** YOUR CODE HERE ***"
@@ -574,25 +574,45 @@ class ApproximateSearchAgent(Agent):
         self.moves = search.bfs(prob)
         print self.moves
 
-        # print "START"
-        # foodGrid = state.getFood()
-        # # walls = state.getWalls()
-        # # start = state.getPacmanPosition()
-        # mcdonalds = []
-        # for x, row in enumerate(foodGrid):
-        #     for y, cell in enumerate(row):
-        #         if foodGrid[x][y]:
-        #             distance = mazeDistance(state.getPacmanPosition(), (x,y), state)
+        print "START"
+        foodGrid = state.getFood()
+        # walls = state.getWalls()
+        # start = state.getPacmanPosition()
+        mcdonalds = []
+        for x, row in enumerate(foodGrid):
+            for y, cell in enumerate(row):
+                if foodGrid[x][y]:
+                    distance = mazeDistance(state.getPacmanPosition(), (x,y), state)
+                    #distance = find_manhattan_distance(state.getPacmanPosition(), (x,y))
 
-        # if mcdonalds:
-        #     coordinate = min(mcdonalds)[1]
-        #     prob = PositionSearchProblem(state, start=start, goal=coordinate, warn=False)
-        #     self.moves = search.bfs(prob)
-        #     print self.moves
-        #     return
-        # self.moves = []
-    # def cornerDistance(self, x, y):
-    #     return max([find_manhattan_distance((x,y), c) for c in self.corners])
+        if mcdonalds:
+            coordinate = min(mcdonalds)[1]
+            prob = PositionSearchProblem(state, start=start, goal=coordinate, warn=False)
+            self.moves = search.bfs(prob)
+            print self.moves
+            return
+        self.moves = []
+    def cornerDistance(self, x, y, state):
+        return max([mazeDistance((x,y), c, state) for c in self.corners])
+
+
+    # def smallestConnectedComponent(lis):
+    #     make a set of visited points;
+    #     finalList = 
+    #     loop through food in list:
+    #         if food is in visited:
+    #             continue
+    #         make a stack of positions; make a set of locations
+    #         loop:
+    #             if positions empty:
+    #                 if length of locations equals length of foodlist:
+    #                     return foodList
+    #                 replace finalList with the locations set if length of locations is less than finalList
+    #             node = positions.pop()
+    #             add node to locations and visited points
+    #             if any adjacent squares contain food
+    #                 positions.push(food containing adjacent squares)
+    #     return finalList 
 
     def adjacentDots(self, state, currx, curry):
         foodGrid = state.getFood()
@@ -602,7 +622,7 @@ class ApproximateSearchAgent(Agent):
         for x in range(currx-2, currx+2):
             for y in range(curry-2, curry+2):
                 if x >= 0 and y >= 0 and x <= self.right and y <= self.top:
-                    if foodGrid[x][y]:
+                    if foodGrid[x][y] and not walls[x][y]:
                         count += 1
         return count
 
@@ -621,14 +641,14 @@ class ApproximateSearchAgent(Agent):
             foodGrid = state.getFood()
             for i in range(currx-2, currx+1):
                 for j in range(curry-2, curry+1):
-                    if i >=0 and j>= 0 and i <= self.right and j <= self.top and foodGrid[i][j]:
+                    if i >=0 and j>= 0 and i <= self.right and j <= self.top and foodGrid[i][j] and not walls[i][j]:
                         score = find_manhattan_distance(state.getPacmanPosition(), (i, j)), 0, (i, j)
                         mcdonalds.append(score)
             if not mcdonalds:
                 for x, row in enumerate(foodGrid):
                     for y, cell in enumerate(row):
                         if foodGrid[x][y]:
-                            score = find_manhattan_distance(state.getPacmanPosition(), (x,y)), self.adjacentDots(state, x,y), (x, y)
+                            score = mazeDistance(state.getPacmanPosition(), (x,y), state), self.adjacentDots(state, x,y), (x, y)
                             print score
                             mcdonalds.append(score)
             if mcdonalds:
@@ -639,19 +659,19 @@ class ApproximateSearchAgent(Agent):
         print str(state.getPacmanPosition()) + ' -- > ' + str(a)
         return a
 
-    # def foodHeuristic(self, state, problem):
-    #     position = state.getPacmanPosition()
-    #     food = state.getFood()
-    #     walls = state.getWalls()
-    #     total = []
-    #     for x, row in enumerate(foodGrid):
-    #         for y, cell in enumerate(row):
-    #             if foodGrid[x][y]:
-    #                 # total.append(find_manhattan_distance(position, (x,y)))
-    #                 total.append(mazeDistance(position, (x,y), state))
-    #     if total:
-    #         return max(total)
-    #     return 0
+    def foodHeuristic(self, state, problem):
+        position = state.getPacmanPosition()
+        food = state.getFood()
+        walls = state.getWalls()
+        total = []
+        for x, row in enumerate(foodGrid):
+            for y, cell in enumerate(row):
+                if foodGrid[x][y]:
+                    # total.append(find_manhattan_distance(position, (x,y)))
+                    total.append(mazeDistance(position, (x,y), state))
+        if total:
+            return max(total)
+        return 0
 
 
 def mazeDistance(point1, point2, gameState):
