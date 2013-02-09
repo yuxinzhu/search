@@ -459,14 +459,14 @@ def foodHeuristic(state, problem):
     position, foodGrid = state
     # walls = problem.getWalls()
     "*** YOUR CODE HERE ***"
-    # total = []
-    # for x, row in enumerate(foodGrid):
-    #     for y, cell in enumerate(row):
-    #         if foodGrid[x][y]:
-    #             # total.append(find_manhattan_distance(position, (x,y)))
-    #             total.append(mazeDistance(position, (x,y), problem.startingGameState))
-    # if total:
-    #     return max(total)
+    total = []
+    for x, row in enumerate(foodGrid):
+        for y, cell in enumerate(row):
+            if foodGrid[x][y]:
+                # total.append(find_manhattan_distance(position, (x,y)))
+                total.append(mazeDistance(position, (x,y), problem.startingGameState))
+    if total:
+        return max(total)
     return 0
     # sum()
     # return 0
@@ -554,6 +554,8 @@ class AnyFoodSearchProblem(PositionSearchProblem):
 ##################
 
 class ApproximateSearchAgent(Agent):
+    """Agent description: Agent first goes to the closest corner. From there, using bfs search, agent goest to the closest dot. 
+        Ties are broken by looking at number of dots around it, and goes to the region with less dots.  """
     "Implement your contest entry here.  Change anything but the class name."
     def __init__(self):
         self.moves = []
@@ -570,11 +572,7 @@ class ApproximateSearchAgent(Agent):
         self.corners = ((1,1), (1,top), (right, 1), (right, top))
         corners_path = [((mazeDistance(state.getPacmanPosition(), c, state), c)) for c in self.corners]
         prob = PositionSearchProblem(state, start=state.getPacmanPosition(), goal=min(corners_path)[1], warn=False)
-        print min(corners_path)[1]
         self.moves = search.bfs(prob)
-        print self.moves
-
-        print "START"
         foodGrid = state.getFood()
         # walls = state.getWalls()
         # start = state.getPacmanPosition()
@@ -589,30 +587,10 @@ class ApproximateSearchAgent(Agent):
             coordinate = min(mcdonalds)[1]
             prob = PositionSearchProblem(state, start=start, goal=coordinate, warn=False)
             self.moves = search.bfs(prob)
-            print self.moves
             return
         self.moves = []
     def cornerDistance(self, x, y, state):
         return max([mazeDistance((x,y), c, state) for c in self.corners])
-
-
-    # def smallestConnectedComponent(lis):
-    #     make a set of visited points;
-    #     finalList = 
-    #     loop through food in list:
-    #         if food is in visited:
-    #             continue
-    #         make a stack of positions; make a set of locations
-    #         loop:
-    #             if positions empty:
-    #                 if length of locations equals length of foodlist:
-    #                     return foodList
-    #                 replace finalList with the locations set if length of locations is less than finalList
-    #             node = positions.pop()
-    #             add node to locations and visited points
-    #             if any adjacent squares contain food
-    #                 positions.push(food containing adjacent squares)
-    #     return finalList 
 
     def adjacentDots(self, state, currx, curry):
         foodGrid = state.getFood()
@@ -636,7 +614,6 @@ class ApproximateSearchAgent(Agent):
         if not self.moves:
             currx, curry = state.getPacmanPosition()
             walls = state.getWalls()
-
             mcdonalds = []
             foodGrid = state.getFood()
             for i in range(currx-2, currx+1):
@@ -656,7 +633,6 @@ class ApproximateSearchAgent(Agent):
                 prob = PositionSearchProblem(state, start=state.getPacmanPosition(), goal=coordinate, warn=False)
                 self.moves.extend(search.bfs(prob))
         a = self.moves.pop(0)
-        print str(state.getPacmanPosition()) + ' -- > ' + str(a)
         return a
 
     def foodHeuristic(self, state, problem):
